@@ -6,7 +6,7 @@ react
 build
 demoreact
 # models
-
+lib
 # Logs
 logs
 *.log

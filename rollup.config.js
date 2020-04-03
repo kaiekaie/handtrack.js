@@ -1,36 +1,17 @@
-import minify from 'rollup-plugin-babel-minify';
-import resolve from 'rollup-plugin-node-resolve';
-import fs from 'fs';
-import path from 'path';
+import commonjs from "@rollup/plugin-commonjs";
 
-const copyPlugin = function (options) {
-  return {
-    generateBundle() {
-      const targDir = path.dirname(options.targ);
-      if (!fs.existsSync(targDir)) {
-        fs.mkdirSync(targDir);
-      }
-      fs.writeFileSync(options.targ, fs.readFileSync(options.src));
-
-    }
-  };
-};
+import typescript from "@rollup/plugin-typescript";
+import resolve from "@rollup/plugin-node-resolve";
+import { terser } from "rollup-plugin-terser";
 
 export default {
-  input: 'src/index.js',
-  output: [{
-    file: 'dist/handtrack.min.js',
-    format: 'umd',
-    name: 'handTrack',
-  }, {
-    file: 'demo/handtrack.min.js',
-    format: 'umd',
-    name: 'handTrack',
-  }],
-  plugins: [resolve(), minify()]
-  // plugins: [resolve()]
-  // plugins: [resolve(), copyPlugin({
-  //   src: 'src/index.js',
-  //   targ: 'demoreact/node_modules/handtrackjs/src/index.js'
-  // })]
-}
+  input: "src/index.ts",
+  output: [
+    {
+      dir: "lib",
+      format: "umd",
+      name: "handTrack"
+    }
+  ],
+  plugins: [resolve(), terser(), resolve(), typescript(), commonjs()]
+};

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "ESNext"],
+    "module": "commonjs",
+    "target": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "strict": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "allowJs": true,
+    "declaration": true,
+    "outDir": "lib",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+
+    "rootDir": "./src",
+    "typeRoots": ["src/types", "node_modules/@types"],
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"]
+}
