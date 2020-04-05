@@ -1,22 +1,21 @@
 {
   "name": "handtrackjs-node",
-  "version": "0.0.13",
+  "version": "1.0.1-beta03",
   "description": "Handtrackjs-node: fork of handtrackjs with node and json models",
-  "main": "src/index.js",
-  "unpkg": "dist/handtrack.min.js",
-  "jsdelivr": "dist/handtrack.min.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/victordibia/handtrackjs.git"
+    "url": "https://github.com/kaiekaie/handtrack.js-node"
   },
   "scripts": {
+    "start": "node demo/index.js",
     "build": "rollup -c ",
     "build:demo": "rollup -c -w"
   },
   "files": [
-    "dist/**/*",
+    "lib/**/*",
     "src/**/*",
-    "models/**/*"
+    "jsonmodels/**/*"
   ],
   "keywords": [],
   "author": "",

@@ -73,14 +73,14 @@ export async function stopVideo() {
 
 export class ObjectDetection {
   modelPath: string;
-  weightPath: string;
+
   modelParams: Modelparams;
   fps!: number;
   model!: tfnode.GraphModel;
   constructor(modelParams) {
-    this.modelPath = path.resolve(basePath, "model.json");
-    this.weightPath =
-      basePath + modelParams.modelType + "/weights_manifest.json";
+    this.modelPath = path.join(__dirname, "..", basePath, "model.json");
+    /*    this.weightPath =
+      basePath + modelParams.modelType + "/weights_manifest.json"; */
     this.modelParams = modelParams;
   }
 
