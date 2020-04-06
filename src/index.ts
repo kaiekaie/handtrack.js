@@ -9,10 +9,11 @@
 
 import * as tfnode from "@tensorflow/tfjs-node";
 import * as path from "path";
+import * as fs from "fs";
 import { Modelparams, predictions } from "./types/global";
 import { Tensor, Rank } from "@tensorflow/tfjs-node";
 
-const basePath = "jsonmodels";
+const basePath = "models";
 
 const defaultParams = {
   flipHorizontal: true,
@@ -21,12 +22,12 @@ const defaultParams = {
   maxNumBoxes: 20,
   iouThreshold: 0.5,
   scoreThreshold: 0.99,
-  modelType: "MobilenetV2"
+  modelType: "MobilenetV2",
 };
 
 export async function load(params?: Modelparams) {
   let modelParams = Object.assign({}, defaultParams, params);
-  // console.log(modelParams)
+
   const objectDetection = new ObjectDetection(modelParams);
   await objectDetection.load();
   return objectDetection;
@@ -38,15 +39,15 @@ export function startVideo(video) {
   video.width = video.width || 640;
   video.height = video.height || video.width * (3 / 4);
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     navigator.mediaDevices
       .getUserMedia({
         audio: false,
         video: {
-          facingMode: "user"
-        }
+          facingMode: "user",
+        },
       })
-      .then(stream => {
+      .then((stream) => {
         window.localStream = stream;
         video.srcObject = stream;
         video.onloadedmetadata = () => {
@@ -54,7 +55,7 @@ export function startVideo(video) {
           resolve(true);
         };
       })
-      .catch(function(err) {
+      .catch(function (err) {
         resolve(false);
       });
   });
@@ -62,7 +63,7 @@ export function startVideo(video) {
 
 export async function stopVideo() {
   if (window.localStream) {
-    window.localStream.getTracks().forEach(track => {
+    window.localStream.getTracks().forEach((track) => {
       track.stop();
       return true;
     });
@@ -78,7 +79,15 @@ export class ObjectDetection {
   fps!: number;
   model!: tfnode.GraphModel;
   constructor(modelParams) {
-    this.modelPath = path.join(__dirname, "..", basePath, "model.json");
+    this.modelPath = path.relative(process.cwd(), `${basePath}/model.json`);
+
+    if (!fs.existsSync(this.modelPath)) {
+      console.error(
+        "path to model missing please copy the folder from this package"
+      );
+      process.exit(1);
+    }
+    console.log(this.modelPath);
     /*    this.weightPath =
       basePath + modelParams.modelType + "/weights_manifest.json"; */
     this.modelParams = modelParams;
@@ -95,8 +104,8 @@ export class ObjectDetection {
         tfnode.zeros([1, 300, 300, 3])
       )) as Tensor<Rank>[];
 
-      result.map(async t => await t.data());
-      result.map(async t => t.dispose());
+      result.map(async (t) => await t.data());
+      result.map(async (t) => t.dispose());
     } catch (error) {
       console.error(error);
       process.exit(1);
@@ -113,7 +122,7 @@ export class ObjectDetection {
   ) {
     let timeBegin = Date.now();
     const [height, width] = getInputTensorDimensions(input);
-    console.log(height, width);
+
     const resizedHeight = getValidResolution(
       this.modelParams.imageScaleFactor,
       height,
@@ -143,7 +152,7 @@ export class ObjectDetection {
     // const result = await this.model.executeAsync(batched);
     const _self = this;
 
-    return this.model.executeAsync(batched).then(function(result) {
+    return this.model.executeAsync(batched).then(function (result) {
       const scores = result[0].dataSync();
       const boxes = result[1].dataSync();
 
@@ -163,7 +172,7 @@ export class ObjectDetection {
       const indexTensor = tfnode.tidy(() => {
         const boxes2 = tfnode.tensor2d(boxes, [
           result[1].shape[1],
-          result[1].shape[3]
+          result[1].shape[3],
         ]);
         return tfnode.image.nonMaxSuppression(
           boxes2,
@@ -212,7 +221,7 @@ export class ObjectDetection {
       objects.push({
         bbox: bbox,
         class: classes[indexes[i]],
-        score: scores[indexes[i]]
+        score: scores[indexes[i]],
       });
     }
     return objects;

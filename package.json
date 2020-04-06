@@ -1,6 +1,6 @@
 {
   "name": "handtrackjs-node",
-  "version": "1.0.1-beta03",
+  "version": "1.0.1",
   "description": "Handtrackjs-node: fork of handtrackjs with node and json models",
   "main": "lib/index.js",
   "repository": {
@@ -8,7 +8,7 @@
     "url": "https://github.com/kaiekaie/handtrack.js-node"
   },
   "scripts": {
-    "start": "ts-node demo/index.ts",
+    "start": "ts-node demo/test/index.ts",
     "build": "rollup -c "
   },
   "files": [
